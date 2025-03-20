@@ -446,11 +446,11 @@ class MainActivity : AppCompatActivity() {
     private fun getColorForActivity(activity: Int): Int {
         return when (activity) {
             0 -> Color.parseColor("#FFFFFF")
-            1 -> Color.parseColor("#FFF5F5")
-            2 -> Color.parseColor("#FFDFDF")
-            3 -> Color.parseColor("#FFBFBF")
-            4 -> Color.parseColor("#FF9F9F")
-            5 -> Color.parseColor("#FF7F7F")
+            1 -> Color.parseColor("#D9EAD3")
+            2 -> Color.parseColor("#B6D7A8")
+            3 -> Color.parseColor("#93C47D")
+            4 -> Color.parseColor("#6AA84F")
+            5 -> Color.parseColor("#38761D")
             else -> Color.WHITE
         }
     }
@@ -463,7 +463,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getForecastColor(forecastText: String): Int {
         return when (forecastText) {
-            "Плохой" -> android.graphics.Color.parseColor("#FFF5F5")   // нежно-красный
+            "Плохой" -> android.graphics.Color.parseColor("#F49292")   // нежно-красный
             "Хороший" -> android.graphics.Color.parseColor("#FFFFE0") // нежно-жёлтый
             "Отличный" -> android.graphics.Color.parseColor("#F0FFF0")// нежно-зелёный
             else -> android.graphics.Color.WHITE

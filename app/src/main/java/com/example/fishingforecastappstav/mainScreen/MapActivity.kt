@@ -1,7 +1,6 @@
 package com.example.fishingforecastappstav
 
 
-
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -21,7 +20,8 @@ class MapActivity : AppCompatActivity() {
         webView.webViewClient = WebViewClient()
 
         // Загрузка карты по URL из iframe
-        val mapUrl = "https://www.google.ru/maps/d/embed?mid=1WQ1s7X6JYl1-RUIHFGLuv0gsQyJmt8E&ehbc=2E312F"
+        val mapUrl =
+            "https://www.google.ru/maps/d/embed?mid=1WQ1s7X6JYl1-RUIHFGLuv0gsQyJmt8E&ehbc=2E312F"
         webView.loadUrl(mapUrl)
     }
 }
