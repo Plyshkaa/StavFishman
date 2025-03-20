@@ -2,15 +2,20 @@ package com.example.fishingforecastappstav
 
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.TableRow
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fishingforecastappstav.databinding.ActivityMainBinding
-import com.example.fishingforecastappstav.mainScreen.FishAdapter
 import com.example.fishingforecastappstav.mainScreen.Fish
+import com.example.fishingforecastappstav.mainScreen.FishAdapter
 import com.example.fishingforecastappstav.mainScreen.RetrofitInstance
 import com.example.fishingforecastappstav.mainScreen.WeatherResponse
 import retrofit2.Call
@@ -21,10 +26,10 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    // Используем View Binding для удобного доступа к элементам layout
+    // View Binding
     private lateinit var binding: ActivityMainBinding
 
-    // Статический список рыб для отображения (для RecyclerView)
+    // Статический список рыб для RecyclerView (без статичного коэффициента)
     private val fishList = listOf(
         Fish("Окунь", R.drawable.ic_perch, "Лучший клев в утренние часы."),
         Fish("Щука", R.drawable.ic_pike, "Хищник, клюёт в сумерки."),
@@ -35,13 +40,13 @@ class MainActivity : AppCompatActivity() {
         Fish("Сазан", R.drawable.ic_carp, "Крупная рыба, часто разводимая в водохранилищах и прудах.")
     )
 
-    // Объявляем data class для календаря клева
+    // Data class для календаря клева
     data class FishCalendarData(
         val fishName: String,
-        val monthlyActivity: List<Int> // 12 значений от 0 до 5
+        val monthlyActivity: List<Int> // 12 значений (0..5)
     )
 
-    // Массив с названиями месяцев
+    // Массив названий месяцев
     private val months = arrayOf("Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек")
 
     // Пример списка данных для календаря клева
@@ -52,23 +57,29 @@ class MainActivity : AppCompatActivity() {
         FishCalendarData("Лещ", listOf(0, 1, 2, 3, 4, 5, 4, 4, 3, 2, 1, 0))
     )
 
+    // Погодные данные (обновляются после fetchWeather)
+    private var currentTemperature: Float = 0f
+    private var currentPressure: Int = 0
+    private var currentWindSpeed: Float = 0f
+    private var currentTimeOfDay: String = "Morning"
+    private var currentSeason: String = "Spring"
+    private var currentMoonPhase: String = "New Moon"
+    private var currentIsSpawning: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Инициализируем binding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Настраиваем обработку пунктов меню
+        // Нижнее меню
         binding.bottomNav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_guide -> {
-                    // Открыть справочник
                     // startActivity(Intent(this, GuideActivity::class.java))
                     true
                 }
                 R.id.nav_map -> {
                     startActivity(Intent(this, MapActivity::class.java))
-                    // Открыть карту
                     true
                 }
                 R.id.nav_about -> {
@@ -79,67 +90,150 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Устанавливаем текущую дату на экране
+        // Устанавливаем текущую дату
         binding.tvCurrentDate.text = getCurrentDate()
 
-        // Настраиваем RecyclerView для отображения списка рыб
+        // Настраиваем список рыб (RecyclerView)
         setupFishRecyclerView()
 
-        // Вызываем функцию для заполнения календаря клева
+        // Заполняем календарь клева
         showCalendar()
 
-        // Получаем данные о погоде и на их основе рассчитываем прогноз клева
+        // Кнопка "Выберите рыбу" - делаем PopupMenu
+        binding.btnSelectFish.setOnClickListener {
+            showFishPopupMenu()
+        }
+
+        // Загружаем данные о погоде
         fetchWeather()
     }
 
-    // Функция для получения текущей даты в формате "день месяц год"
-    private fun getCurrentDate(): String {
-        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
-        return sdf.format(Date())
+    // PopupMenu для выбора рыбы
+    private fun showFishPopupMenu() {
+        val popup = PopupMenu(this, binding.btnSelectFish)
+        // Заполняем меню названиями рыб
+        fishList.forEach { fish ->
+            popup.menu.add(fish.name)
+        }
+        popup.setOnMenuItemClickListener { menuItem ->
+            // Находим выбранную рыбу по имени
+            val selectedFish = fishList.find { it.name == menuItem.title.toString() }
+            if (selectedFish != null) {
+                // Рассчитываем динамический коэффициент
+                val fishFactor = getFishFactorDynamic(
+                    fishName = selectedFish.name,
+                    temperature = currentTemperature,
+                    pressure = currentPressure,
+                    windSpeed = currentWindSpeed,
+                    timeOfDay = currentTimeOfDay,
+                    season = currentSeason,
+                    moonPhase = currentMoonPhase,
+                    isSpawning = currentIsSpawning
+                )
+                // Базовый расчёт
+                val baseScore = calculateCatchScore(
+                    currentTemperature,
+                    currentPressure,
+                    currentWindSpeed,
+                    currentTimeOfDay,
+                    currentSeason,
+                    currentMoonPhase,
+                    currentIsSpawning
+                )
+                val finalScore = (baseScore * fishFactor).toInt()
+                val forecastText = getForecastText(finalScore)
+                binding.tvCatchForecast.text = "Прогноз клева для рыбы ${selectedFish.name}: $forecastText"
+                val color = getForecastColor(forecastText)
+                binding.tvCatchForecast.setBackgroundColor(color)
+            }
+            true
+        }
+        popup.show()
     }
 
-    // Настройка RecyclerView с горизонтальным расположением элементов
+    // Функция динамического расчёта fishFactor на основе условий
+    private fun getFishFactorDynamic(
+        fishName: String,
+        temperature: Float,
+        pressure: Int,
+        windSpeed: Float,
+        timeOfDay: String,
+        season: String,
+        moonPhase: String,
+        isSpawning: Boolean
+    ): Float {
+        // Базовый коэффициент для каждой рыбы
+        val baseFactor = when (fishName) {
+            "Окунь" -> 1.0f
+            "Щука" -> 1.2f
+            "Лещ" -> 0.9f
+            "Карась" -> 1.0f
+            "Плотва" -> 1.1f
+            "Судак" -> 1.3f
+            "Сазан" -> 1.0f
+            else -> 1.0f
+        }
+        var dynamicFactor = baseFactor
+
+        // Пример динамических корректировок:
+        if (fishName == "Окунь" && temperature > 25) {
+            dynamicFactor -= 0.1f
+        }
+        if (fishName == "Щука" && (timeOfDay == "Evening" || timeOfDay == "Night")) {
+            dynamicFactor += 0.1f
+        }
+        if (fishName == "Лещ" && season == "Winter") {
+            dynamicFactor -= 0.1f
+        }
+        if (isSpawning) {
+            dynamicFactor -= 0.2f
+        }
+
+        // Ограничиваем коэффициент в диапазоне [0.5, 1.5]
+        if (dynamicFactor < 0.5f) dynamicFactor = 0.5f
+        if (dynamicFactor > 1.5f) dynamicFactor = 1.5f
+
+        return dynamicFactor
+    }
+
+    // Настройка RecyclerView для списка рыб
     private fun setupFishRecyclerView() {
         val adapter = FishAdapter(fishList) { fish ->
             Log.d("MainActivity", "Нажата рыба: ${fish.name}")
             openFishDetails(fish)
         }
-        binding.rvFishList.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvFishList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.rvFishList.adapter = adapter
     }
 
-    // Получаем данные о погоде
+    // Загрузка погоды
     private fun fetchWeather() {
         val apiKey = "b2f3cbb0c3c8e31e7a784ac5c9b417c7" // Замените на свой API-ключ
         RetrofitInstance.api.getCurrentWeather("Stavropol", apiKey)
             .enqueue(object : Callback<WeatherResponse> {
-                override fun onResponse(
-                    call: Call<WeatherResponse>,
-                    response: Response<WeatherResponse>
-                ) {
+                override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
                     if (response.isSuccessful) {
                         val weatherData = response.body()
                         weatherData?.let {
-                            val temperature = it.main.temp
-                            val pressure = it.main.pressure
-                            val windSpeed = 3.5f
-                            val timeOfDay = "Morning"
-                            val season = getSeason()
-                            val moonPhase = "New Moon"
-                            val isSpawning = false
+                            // Обновляем текущие погодные данные
+                            currentTemperature = it.main.temp
+                            currentPressure = it.main.pressure
+                            currentWindSpeed = 3.5f // Используйте значение, если API его возвращает
+                            currentTimeOfDay = "Morning" // Здесь можно динамически определить время суток
+                            currentSeason = getSeason()
+                            currentMoonPhase = "New Moon" // Можно рассчитать динамически
+                            currentIsSpawning = false
 
-                            // Переводим на русский язык
-                            val timeOfDayRu = getTimeOfDayInRussian(timeOfDay)
-                            val seasonRu = getSeasonInRussian(season)
-                            val moonPhaseRu = getMoonPhaseInRussian(moonPhase)
-                            val spawningRu = getSpawningInRussian(isSpawning)
+                            val timeOfDayRu = getTimeOfDayInRussian(currentTimeOfDay)
+                            val seasonRu = getSeasonInRussian(currentSeason)
+                            val moonPhaseRu = getMoonPhaseInRussian(currentMoonPhase)
+                            val spawningRu = getSpawningInRussian(currentIsSpawning)
 
                             val infoBuilder = StringBuilder().apply {
                                 appendLine("Погода и условия для расчёта:")
-                                appendLine("• Температура: $temperature°C")
-                                appendLine("• Давление: $pressure мм рт. ст.")
-                                appendLine("• Ветер: $windSpeed м/с")
+                                appendLine("• Температура: $currentTemperature°C")
+                                appendLine("• Давление: $currentPressure мм рт. ст.")
+                                appendLine("• Ветер: $currentWindSpeed м/с")
                                 appendLine("• Время суток: $timeOfDayRu")
                                 appendLine("• Сезон: $seasonRu")
                                 appendLine("• Фаза луны: $moonPhaseRu")
@@ -147,17 +241,33 @@ class MainActivity : AppCompatActivity() {
                             }
                             binding.tvWeatherForecast.text = infoBuilder.toString()
 
-                            val score = calculateCatchScore(
-                                temperature,
-                                pressure,
-                                windSpeed,
-                                timeOfDay,
-                                season,
-                                moonPhase,
-                                isSpawning
-                            )
-                            val forecastText = getForecastText(score)
-                            binding.tvCatchForecast.text = "Прогноз клева: $forecastText"
+                            // Если пользователь уже выбрал рыбу, можно пересчитать прогноз здесь
+                            val selectedPosition = binding.spinnerFish.selectedItemPosition
+                            if (selectedPosition in fishList.indices) {
+                                val selectedFish = fishList[selectedPosition]
+                                val fishFactor = getFishFactorDynamic(
+                                    selectedFish.name,
+                                    currentTemperature,
+                                    currentPressure,
+                                    currentWindSpeed,
+                                    currentTimeOfDay,
+                                    currentSeason,
+                                    currentMoonPhase,
+                                    currentIsSpawning
+                                )
+                                val baseScore = calculateCatchScore(
+                                    currentTemperature,
+                                    currentPressure,
+                                    currentWindSpeed,
+                                    currentTimeOfDay,
+                                    currentSeason,
+                                    currentMoonPhase,
+                                    currentIsSpawning
+                                )
+                                val finalScore = (baseScore * fishFactor).toInt()
+                                val forecastText = getForecastText(finalScore)
+                                binding.tvCatchForecast.text = "Прогноз клева для рыбы ${selectedFish.name}: $forecastText"
+                            }
                         }
                     } else {
                         binding.tvWeatherForecast.text = "Ошибка загрузки погоды"
@@ -170,7 +280,7 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    // Функция для определения сезона по текущему месяцу
+    // Определение сезона по текущему месяцу
     private fun getSeason(): String {
         val month = Calendar.getInstance().get(Calendar.MONTH) + 1
         return when (month) {
@@ -181,9 +291,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Функция расчёта баллов клева с учётом разных факторов
-     */
+    // Базовый расчёт баллов клева
     private fun calculateCatchScore(
         temp: Float,
         pressure: Int,
@@ -227,7 +335,7 @@ class MainActivity : AppCompatActivity() {
         return score
     }
 
-    // Функция для преобразования баллов в текстовый прогноз
+    // Преобразование баллов в текстовый прогноз
     private fun getForecastText(score: Int): String {
         return when {
             score >= 80 -> "Отличный"
@@ -236,9 +344,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Функция для обработки клика по элементу списка рыб
+    // Обработка клика по рыбе (пример)
     private fun openFishDetails(fish: Fish) {
-        // Пример перехода:
+        // Например, переход на другую активность
         // val intent = Intent(this, FishDetailActivity::class.java)
         // intent.putExtra("fish", fish)
         // startActivity(intent)
@@ -282,18 +390,17 @@ class MainActivity : AppCompatActivity() {
         return if (isSpawning) "Да" else "Нет"
     }
 
-    // Функция для открытия CalendarActivity (если используется отдельная активность)
+    // Функция для открытия CalendarActivity (если нужно)
     private fun openCalendarActivity() {
         val intent = Intent(this, CalendarActivity::class.java)
         startActivity(intent)
     }
 
-    // Функция для заполнения таблицы календаря клева
+    // Заполнение таблицы календаря клева
     private fun showCalendar() {
         val tableLayout = binding.tlCalendar
         tableLayout.removeAllViews()
 
-        // Заголовок таблицы
         val headerRow = TableRow(this)
         val fishHeaderCell = TextView(this).apply {
             text = "Рыба"
@@ -312,7 +419,6 @@ class MainActivity : AppCompatActivity() {
         }
         tableLayout.addView(headerRow)
 
-        // Заполнение строк таблицы
         for (fishData in fishCalendarList) {
             val row = TableRow(this)
             val fishNameCell = TextView(this).apply {
@@ -336,7 +442,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Пример функции для получения цвета
+    // Функция для получения цвета ячеек
     private fun getColorForActivity(activity: Int): Int {
         return when (activity) {
             0 -> Color.parseColor("#FFFFFF")
@@ -346,6 +452,21 @@ class MainActivity : AppCompatActivity() {
             4 -> Color.parseColor("#FF9F9F")
             5 -> Color.parseColor("#FF7F7F")
             else -> Color.WHITE
+        }
+    }
+
+    // Функция для получения текущей даты
+    private fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
+        return sdf.format(Date())
+    }
+
+    private fun getForecastColor(forecastText: String): Int {
+        return when (forecastText) {
+            "Плохой" -> android.graphics.Color.parseColor("#FFF5F5")   // нежно-красный
+            "Хороший" -> android.graphics.Color.parseColor("#FFFFE0") // нежно-жёлтый
+            "Отличный" -> android.graphics.Color.parseColor("#F0FFF0")// нежно-зелёный
+            else -> android.graphics.Color.WHITE
         }
     }
 }

@@ -42,11 +42,29 @@
                     android:id="@+id/tvCatchForecast"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Прогноз клева: Отличный"
+                    android:text="Прогноз клева для рыбы:"
                     android:textSize="16sp"
                     android:layout_marginTop="8dp"/>
+
+                <!-- Кнопка для выбора рыбы -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSelectFish"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Выберите рыбу"
+                    android:layout_marginTop="8dp"
+                    />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <Spinner
+            android:id="@+id/spinnerFish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:spinnerMode="dropdown"
+            tools:ignore="MissingConstraints" />
 
         <!-- Карточка с погодой и условиями -->
         <com.google.android.material.card.MaterialCardView
