@@ -1,8 +1,12 @@
 package com.example.fishingforecastappstav
 
+import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fishingforecastappstav.databinding.ActivityMainBinding
 import com.example.fishingforecastappstav.mainScreen.FishAdapter
@@ -20,11 +24,33 @@ class MainActivity : AppCompatActivity() {
     // Используем View Binding для удобного доступа к элементам layout
     private lateinit var binding: ActivityMainBinding
 
-    // Статический список рыб для отображения (пока статический, можно расширить позже)
+    // Статический список рыб для отображения (для RecyclerView)
     private val fishList = listOf(
         Fish("Окунь", R.drawable.ic_perch, "Лучший клев в утренние часы."),
         Fish("Щука", R.drawable.ic_pike, "Хищник, клюёт в сумерки."),
-        Fish("Лещ", R.drawable.ic_bream, "Питается в пасмурные дни.")
+        Fish("Лещ", R.drawable.ic_bream, "Питается в пасмурные дни."),
+        Fish("Карась", R.drawable.ic_crucian_carp, "Часто разводится в прудах, устойчив даже к неблагоприятным условиям."),
+        Fish("Плотва", R.drawable.ic_roach, "Активно кормится в пресной воде, особенно в осенний период."),
+        Fish("Судак", R.drawable.ic_zander, "Ценится за спортивную ловлю, встречается в чистых реках и озёрах."),
+        Fish("Сазан", R.drawable.ic_carp, "Крупная рыба, часто разводимая в водохранилищах и прудах.")
+    )
+
+    // Объявляем data class для календаря клева
+    data class FishCalendarData(
+        val fishName: String,
+        val monthlyActivity: List<Int> // 12 значений от 0 до 5
+    )
+
+    // Массив с названиями месяцев
+    private val months = arrayOf("Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек")
+
+    // Пример списка данных для календаря клева
+    private val fishCalendarList = listOf(
+        FishCalendarData("Карп", listOf(1, 2, 3, 4, 5, 5, 4, 4, 3, 2, 1, 1)),
+        FishCalendarData("Карась", listOf(1, 2, 4, 5, 5, 5, 5, 5, 4, 3, 2, 1)),
+        FishCalendarData("Белый амур", listOf(1,1,2,3,4,5,5,4,3,2,1,1)),
+        FishCalendarData("Лещ", listOf(0,1,2,3,4,5,4,4,3,2,1,0))
+        // Можно добавить и другие виды
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,14 +59,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         // Устанавливаем текущую дату на экране
         binding.tvCurrentDate.text = getCurrentDate()
 
         // Настраиваем RecyclerView для отображения списка рыб
         setupFishRecyclerView()
 
+        // Вызываем функцию для заполнения календаря клева
+        showCalendar()
+
         // Получаем данные о погоде и на их основе рассчитываем прогноз клева
         fetchWeather()
+
+        // Пример: если у вас в layout есть кнопка с id someButton для открытия календаря:
+        // binding.someButton.setOnClickListener {
+        //     openCalendarActivity()
+        // }
     }
 
     // Функция для получения текущей даты в формате "день месяц год"
@@ -52,7 +88,7 @@ class MainActivity : AppCompatActivity() {
     // Настройка RecyclerView с горизонтальным расположением элементов
     private fun setupFishRecyclerView() {
         val adapter = FishAdapter(fishList) { fish ->
-            // Обработка клика по элементу списка (пока просто лог, потом можно открыть детальную информацию)
+            // Обработка клика по элементу списка
             Log.d("MainActivity", "Нажата рыба: ${fish.name}")
             openFishDetails(fish)
         }
@@ -77,7 +113,6 @@ class MainActivity : AppCompatActivity() {
                             val temperature = it.main.temp
                             val pressure = it.main.pressure
                             val windSpeed = 3.5f
-                            // Здесь вы можете динамически определить время суток, сезон и фазу луны
                             val timeOfDay = "Morning"
                             val season = getSeason()
                             val moonPhase = "New Moon"
@@ -107,7 +142,7 @@ class MainActivity : AppCompatActivity() {
                                 temperature,
                                 pressure,
                                 windSpeed,
-                                timeOfDay,  // Важно передать оригинальные англ. значения в функцию
+                                timeOfDay,
                                 season,
                                 moonPhase,
                                 isSpawning
@@ -256,4 +291,76 @@ class MainActivity : AppCompatActivity() {
         return if (isSpawning) "Да" else "Нет"
     }
 
+    // Функция для открытия CalendarActivity (если используется отдельная активность)
+    private fun openCalendarActivity() {
+        val intent = Intent(this, CalendarActivity::class.java)
+        startActivity(intent)
+    }
+
+    // Функция для заполнения таблицы календаря клева
+    private fun showCalendar() {
+        val tableLayout = binding.tlCalendar
+
+        // Очищаем, если уже были добавлены строки
+        tableLayout.removeAllViews()
+
+        // Создаём заголовок (шапку)
+        val headerRow = TableRow(this)
+        // Первая ячейка "Рыба"
+        val fishHeaderCell = TextView(this).apply {
+            text = "Рыба"
+            textSize = 14f
+            setPadding(16, 16, 16, 16)
+        }
+        headerRow.addView(fishHeaderCell)
+
+        // Ячейки для месяцев (Янв...Дек)
+        for (month in months) {
+            val monthCell = TextView(this).apply {
+                text = month
+                textSize = 14f
+                setPadding(16, 16, 16, 16)
+            }
+            headerRow.addView(monthCell)
+        }
+        tableLayout.addView(headerRow)
+
+        // Строки для каждой рыбы
+        for (fishData in fishCalendarList) {
+            val row = TableRow(this)
+            // 1-я колонка – название рыбы
+            val fishNameCell = TextView(this).apply {
+                text = fishData.fishName
+                textSize = 14f
+                setPadding(16, 16, 16, 16)
+            }
+            row.addView(fishNameCell)
+
+            // 12 колонок с активностью
+            for (activityValue in fishData.monthlyActivity) {
+                val cell = TextView(this).apply {
+                    text = activityValue.toString()
+                    textSize = 14f
+                    setPadding(16, 16, 16, 16)
+                    gravity = android.view.Gravity.CENTER
+                    setBackgroundColor(getColorForActivity(activityValue))
+                }
+                row.addView(cell)
+            }
+            tableLayout.addView(row)
+        }
+    }
+
+    // Пример функции для получения цвета
+    private fun getColorForActivity(activity: Int): Int {
+        return when (activity) {
+            0 -> Color.parseColor("#FFFFFF")
+            1 -> Color.parseColor("#FFF5F5")
+            2 -> Color.parseColor("#FFDFDF")
+            3 -> Color.parseColor("#FFBFBF")
+            4 -> Color.parseColor("#FF9F9F")
+            5 -> Color.parseColor("#FF7F7F")
+            else -> Color.WHITE
+        }
+    }
 }
