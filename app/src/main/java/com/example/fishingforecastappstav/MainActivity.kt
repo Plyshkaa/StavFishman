@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity() {
                             currentTemperature = it.main.temp
                             currentPressure = it.main.pressure
                             currentWindSpeed = 3.5f // Используйте значение, если API его возвращает
-                            currentTimeOfDay = "Morning" // Здесь можно динамически определить время суток
+                            currentTimeOfDay = getCurrentTimeOfDay() // Здесь можно динамически определить время суток
                             currentSeason = getSeason()
                             currentMoonPhase = "New Moon" // Можно рассчитать динамически
                             currentIsSpawning = false
@@ -464,9 +464,19 @@ class MainActivity : AppCompatActivity() {
     private fun getForecastColor(forecastText: String): Int {
         return when (forecastText) {
             "Плохой" -> android.graphics.Color.parseColor("#F49292")   // нежно-красный
-            "Хороший" -> android.graphics.Color.parseColor("#FFFFE0") // нежно-жёлтый
-            "Отличный" -> android.graphics.Color.parseColor("#F0FFF0")// нежно-зелёный
+            "Хороший" -> android.graphics.Color.parseColor("#FFE599") // нежно-жёлтый
+            "Отличный" -> android.graphics.Color.parseColor("#B6D7A8")// нежно-зелёный
             else -> android.graphics.Color.WHITE
+        }
+    }
+
+    private fun getCurrentTimeOfDay(): String {
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        return when (hour) {
+            in 5..11 -> "Morning"    // с 5 до 11 утра
+            in 12..16 -> "Day"       // с 12 до 16 дня
+            in 17..20 -> "Evening"   // с 17 до 20 вечера
+            else -> "Night"          // с 21 до 4 ночи
         }
     }
 }
