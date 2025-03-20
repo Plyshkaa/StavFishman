@@ -48,9 +48,8 @@ class MainActivity : AppCompatActivity() {
     private val fishCalendarList = listOf(
         FishCalendarData("Карп", listOf(1, 2, 3, 4, 5, 5, 4, 4, 3, 2, 1, 1)),
         FishCalendarData("Карась", listOf(1, 2, 4, 5, 5, 5, 5, 5, 4, 3, 2, 1)),
-        FishCalendarData("Белый амур", listOf(1,1,2,3,4,5,5,4,3,2,1,1)),
-        FishCalendarData("Лещ", listOf(0,1,2,3,4,5,4,4,3,2,1,0))
-        // Можно добавить и другие виды
+        FishCalendarData("Белый амур", listOf(1, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 1)),
+        FishCalendarData("Лещ", listOf(0, 1, 2, 3, 4, 5, 4, 4, 3, 2, 1, 0))
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +58,25 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        // Настраиваем обработку пунктов меню
+        binding.bottomNav.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_guide -> {
+                    // Открыть справочник
+                    // startActivity(Intent(this, GuideActivity::class.java))
+                    true
+                }
+                R.id.nav_map -> {
+                    // Открыть карту
+                    true
+                }
+                R.id.nav_about -> {
+                    // О приложении
+                    true
+                }
+                else -> false
+            }
+        }
 
         // Устанавливаем текущую дату на экране
         binding.tvCurrentDate.text = getCurrentDate()
@@ -72,11 +89,6 @@ class MainActivity : AppCompatActivity() {
 
         // Получаем данные о погоде и на их основе рассчитываем прогноз клева
         fetchWeather()
-
-        // Пример: если у вас в layout есть кнопка с id someButton для открытия календаря:
-        // binding.someButton.setOnClickListener {
-        //     openCalendarActivity()
-        // }
     }
 
     // Функция для получения текущей даты в формате "день месяц год"
@@ -88,7 +100,6 @@ class MainActivity : AppCompatActivity() {
     // Настройка RecyclerView с горизонтальным расположением элементов
     private fun setupFishRecyclerView() {
         val adapter = FishAdapter(fishList) { fish ->
-            // Обработка клика по элементу списка
             Log.d("MainActivity", "Нажата рыба: ${fish.name}")
             openFishDetails(fish)
         }
@@ -109,7 +120,6 @@ class MainActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val weatherData = response.body()
                         weatherData?.let {
-                            // Получаем данные для расчёта
                             val temperature = it.main.temp
                             val pressure = it.main.pressure
                             val windSpeed = 3.5f
@@ -124,7 +134,6 @@ class MainActivity : AppCompatActivity() {
                             val moonPhaseRu = getMoonPhaseInRussian(moonPhase)
                             val spawningRu = getSpawningInRussian(isSpawning)
 
-                            // Формируем текст с параметрами
                             val infoBuilder = StringBuilder().apply {
                                 appendLine("Погода и условия для расчёта:")
                                 appendLine("• Температура: $temperature°C")
@@ -137,7 +146,6 @@ class MainActivity : AppCompatActivity() {
                             }
                             binding.tvWeatherForecast.text = infoBuilder.toString()
 
-                            // Считаем баллы клева
                             val score = calculateCatchScore(
                                 temperature,
                                 pressure,
@@ -163,7 +171,7 @@ class MainActivity : AppCompatActivity() {
 
     // Функция для определения сезона по текущему месяцу
     private fun getSeason(): String {
-        val month = Calendar.getInstance().get(Calendar.MONTH) + 1 // месяцы от 0 до 11, поэтому +1
+        val month = Calendar.getInstance().get(Calendar.MONTH) + 1
         return when (month) {
             in 3..5 -> "Spring"
             in 6..8 -> "Summer"
@@ -173,15 +181,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Функция расчёта баллов клева с учётом разных факторов:
-     * @param temp Температура (°C)
-     * @param pressure Атмосферное давление (мм рт. ст.)
-     * @param windSpeed Скорость ветра (м/с)
-     * @param timeOfDay Время суток ("Morning", "Day", "Evening", "Night")
-     * @param season Сезон ("Spring", "Summer", "Autumn", "Winter")
-     * @param moonPhase Фаза Луны ("New Moon", "Full Moon", "First Quarter", "Last Quarter", "Other")
-     * @param isSpawning Флаг нереста (true, если идёт нерест)
-     * @return Общий балл клева
+     * Функция расчёта баллов клева с учётом разных факторов
      */
     private fun calculateCatchScore(
         temp: Float,
@@ -193,29 +193,23 @@ class MainActivity : AppCompatActivity() {
         isSpawning: Boolean
     ): Int {
         var score = 0
-
-        // Фактор погоды: оптимальная температура 15-20°C
         score += when {
             temp in 15f..20f -> 30
             temp in 10f..25f -> 20
             else -> 5
         }
-        // Учитываем ветер (оптимальный диапазон: 3-5 м/с)
         score += when {
             windSpeed in 3f..5f -> 10
             windSpeed in 1f..10f -> 5
             else -> 0
         }
-        // Фактор давления: оптимальное давление 750-770 мм рт. ст.
         score += if (pressure in 750..770) 20 else 10
-        // Фактор времени суток
         score += when (timeOfDay) {
             "Morning", "Evening" -> 10
             "Day" -> 5
             "Night" -> 3
             else -> 0
         }
-        // Сезонный фактор
         score += when (season) {
             "Spring" -> 10
             "Summer" -> 15
@@ -223,15 +217,12 @@ class MainActivity : AppCompatActivity() {
             "Winter" -> 5
             else -> 0
         }
-        // Фактор фазы Луны
         score += when (moonPhase) {
             "New Moon", "Full Moon" -> 10
             "First Quarter", "Last Quarter" -> 5
             else -> 0
         }
-        // Фактор нереста: если идёт нерест, снижаем балл
         if (isSpawning) score -= 15
-
         return score
     }
 
@@ -246,8 +237,7 @@ class MainActivity : AppCompatActivity() {
 
     // Функция для обработки клика по элементу списка рыб
     private fun openFishDetails(fish: Fish) {
-        // Здесь можно реализовать переход на новую Activity с подробной информацией о рыбе.
-        // Пример:
+        // Пример перехода:
         // val intent = Intent(this, FishDetailActivity::class.java)
         // intent.putExtra("fish", fish)
         // startActivity(intent)
@@ -300,13 +290,10 @@ class MainActivity : AppCompatActivity() {
     // Функция для заполнения таблицы календаря клева
     private fun showCalendar() {
         val tableLayout = binding.tlCalendar
-
-        // Очищаем, если уже были добавлены строки
         tableLayout.removeAllViews()
 
-        // Создаём заголовок (шапку)
+        // Заголовок таблицы
         val headerRow = TableRow(this)
-        // Первая ячейка "Рыба"
         val fishHeaderCell = TextView(this).apply {
             text = "Рыба"
             textSize = 14f
@@ -314,7 +301,6 @@ class MainActivity : AppCompatActivity() {
         }
         headerRow.addView(fishHeaderCell)
 
-        // Ячейки для месяцев (Янв...Дек)
         for (month in months) {
             val monthCell = TextView(this).apply {
                 text = month
@@ -325,10 +311,9 @@ class MainActivity : AppCompatActivity() {
         }
         tableLayout.addView(headerRow)
 
-        // Строки для каждой рыбы
+        // Заполнение строк таблицы
         for (fishData in fishCalendarList) {
             val row = TableRow(this)
-            // 1-я колонка – название рыбы
             val fishNameCell = TextView(this).apply {
                 text = fishData.fishName
                 textSize = 14f
@@ -336,7 +321,6 @@ class MainActivity : AppCompatActivity() {
             }
             row.addView(fishNameCell)
 
-            // 12 колонок с активностью
             for (activityValue in fishData.monthlyActivity) {
                 val cell = TextView(this).apply {
                     text = activityValue.toString()
