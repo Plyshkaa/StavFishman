@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_map -> {
+                    startActivity(Intent(this, MapActivity::class.java))
                     // Открыть карту
                     true
                 }

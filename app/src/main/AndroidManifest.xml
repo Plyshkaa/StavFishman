@@ -23,11 +23,18 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".MapActivity"
+            android:exported="true" />
+
         <!-- Основное приложение -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.FishingForecastAppStav" />
+
+
+
     </application>
 
 </manifest>
