@@ -9,6 +9,8 @@
     android:background="@color/white"
     android:padding="16dp">
 
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -22,13 +24,25 @@
             app:cardElevation="4dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="32dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
+
+                <!-- Новый текст: Ставропольский край -->
+                <TextView
+                    android:id="@+id/tvRegion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ставропольский край"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp"/>
 
                 <TextView
                     android:id="@+id/tvCurrentDate"
@@ -139,6 +153,7 @@ android:layout_gravity="bottom"
 app:menu="@menu/bottom_nav_menu"
 app:itemIconTint="@color/black"
 app:itemTextColor="@color/black"
-app:labelVisibilityMode="labeled" />
+app:labelVisibilityMode="labeled"
+    app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

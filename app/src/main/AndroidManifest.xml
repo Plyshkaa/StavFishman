@@ -27,6 +27,10 @@
             android:name=".MapActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".AboutScreen"
+            android:exported="true" />
+
         <!-- Основное приложение -->
         <activity
             android:name=".MainActivity"

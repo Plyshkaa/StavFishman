@@ -71,6 +71,17 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Прозрачный статус-бар и тёмные иконки
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                )
+        window.statusBarColor = Color.TRANSPARENT
+
+        // Настраиваем Toolbar как ActionBar
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+
         // Нижнее меню
         binding.bottomNav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -83,12 +94,14 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_about -> {
+                    startActivity(Intent(this, AboutScreen::class.java))
                     // О приложении
                     true
                 }
                 else -> false
             }
         }
+
 
         // Устанавливаем текущую дату
         binding.tvCurrentDate.text = getCurrentDate()
@@ -106,6 +119,16 @@ class MainActivity : AppCompatActivity() {
 
         // Загружаем данные о погоде
         fetchWeather()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Обновляем дату
+        binding.tvCurrentDate.text = getCurrentDate()
+        // Обновляем погодные данные и пересчитываем прогноз
+        fetchWeather()
+        // Если нужно, обновляем календарь
+        showCalendar()
     }
 
     // PopupMenu для выбора рыбы
