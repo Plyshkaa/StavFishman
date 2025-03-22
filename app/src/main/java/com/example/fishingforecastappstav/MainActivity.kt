@@ -367,13 +367,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Обработка клика по рыбе (пример)
-    private fun openFishDetails(fish: Fish) {
-        // Например, переход на другую активность
-        // val intent = Intent(this, FishDetailActivity::class.java)
-        // intent.putExtra("fish", fish)
-        // startActivity(intent)
-    }
 
     // Перевод времени суток на русский
     private fun getTimeOfDayInRussian(timeOfDay: String): String {
@@ -502,4 +495,10 @@ class MainActivity : AppCompatActivity() {
             else -> "Night"          // с 21 до 4 ночи
         }
     }
+    private fun openFishDetails(fish: Fish) {
+        val intent = Intent(this, FishDetailActivity::class.java)
+        intent.putExtra("fish", fish)  // fish должен быть Serializable или Parcelable
+        startActivity(intent)
+    }
+
 }

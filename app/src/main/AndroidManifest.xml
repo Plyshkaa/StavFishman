@@ -30,6 +30,10 @@
         <activity
             android:name=".AboutScreen"
             android:exported="true" />
+        <activity
+            android:name=".FishDetailActivity"
+            android:exported="true" />
+
 
         <!-- Основное приложение -->
         <activity
