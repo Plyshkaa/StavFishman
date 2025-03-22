@@ -95,10 +95,10 @@
             <TextView
                 android:id="@+id/tvWeatherForecast"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:padding="16dp"
                 android:text="Погода и условия для расчёта:"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Секция с популярными рыбами -->
@@ -109,7 +109,7 @@
             android:text="Популярные виды рыб"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/cardWeather"
             app:layout_constraintStart_toStartOf="parent"/>
 
@@ -128,7 +128,7 @@
             android:id="@+id/horizontalScrollCalendar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="7dp"
             app:layout_constraintTop_toBottomOf="@id/rvFishList"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
