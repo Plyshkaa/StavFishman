@@ -5,6 +5,5 @@ import java.io.Serializable
 data class Fish(
     val name: String,
     val iconResId: Int,
-    val description: String
+    val shortDescription: String
 ) : Serializable
-

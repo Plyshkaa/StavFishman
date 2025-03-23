@@ -497,7 +497,8 @@ class MainActivity : AppCompatActivity() {
     }
     private fun openFishDetails(fish: Fish) {
         val intent = Intent(this, FishDetailActivity::class.java)
-        intent.putExtra("fish", fish)  // fish должен быть Serializable или Parcelable
+        // Вместо putExtra("fish", fish), делаем так:
+        intent.putExtra("fishName", fish.name)
         startActivity(intent)
     }
 
