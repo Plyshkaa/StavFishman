@@ -5,11 +5,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.TableRow
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     // View Binding
     private lateinit var binding: ActivityMainBinding
 
-    // Статический список рыб для RecyclerView (без статичного коэффициента)
+    // Статический список рыб (RecyclerView)
     private val fishList = listOf(
         Fish("Окунь", R.drawable.ic_perch, "Лучший клев в утренние часы."),
         Fish("Щука", R.drawable.ic_pike, "Хищник, клюёт в сумерки."),
@@ -79,10 +76,10 @@ class MainActivity : AppCompatActivity() {
                 )
         window.statusBarColor = Color.TRANSPARENT
 
-        // Настраиваем Toolbar как ActionBar
+        // Настраиваем Toolbar как ActionBar (если нужно)
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
-        // Нижнее меню
+        // Настраиваем нижнее меню
         binding.bottomNav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_guide -> {
@@ -95,24 +92,22 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_about -> {
                     startActivity(Intent(this, AboutScreen::class.java))
-                    // О приложении
                     true
                 }
                 else -> false
             }
         }
 
-
         // Устанавливаем текущую дату
         binding.tvCurrentDate.text = getCurrentDate()
 
-        // Настраиваем список рыб (RecyclerView)
+        // Настраиваем RecyclerView со списком рыб
         setupFishRecyclerView()
 
         // Заполняем календарь клева
         showCalendar()
 
-        // Кнопка "Выберите рыбу" - делаем PopupMenu
+        // Кнопка "Выберите рыбу" - открываем PopupMenu для выбора
         binding.btnSelectFish.setOnClickListener {
             showFishPopupMenu()
         }
@@ -125,9 +120,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // Обновляем дату
         binding.tvCurrentDate.text = getCurrentDate()
-        // Обновляем погодные данные и пересчитываем прогноз
+        // Обновляем погодные данные
         fetchWeather()
-        // Если нужно, обновляем календарь
+        // При необходимости обновляем календарь
         showCalendar()
     }
 
@@ -166,6 +161,8 @@ class MainActivity : AppCompatActivity() {
                 val finalScore = (baseScore * fishFactor).toInt()
                 val forecastText = getForecastText(finalScore)
                 binding.tvCatchForecast.text = "Прогноз клева для рыбы ${selectedFish.name}: $forecastText"
+
+                // Подсветка блока (нежные цвета)
                 val color = getForecastColor(forecastText)
                 binding.tvCatchForecast.setBackgroundColor(color)
             }
@@ -174,7 +171,7 @@ class MainActivity : AppCompatActivity() {
         popup.show()
     }
 
-    // Функция динамического расчёта fishFactor на основе условий
+    // Функция динамического расчёта fishFactor
     private fun getFishFactorDynamic(
         fishName: String,
         temperature: Float,
@@ -185,7 +182,6 @@ class MainActivity : AppCompatActivity() {
         moonPhase: String,
         isSpawning: Boolean
     ): Float {
-        // Базовый коэффициент для каждой рыбы
         val baseFactor = when (fishName) {
             "Окунь" -> 1.0f
             "Щука" -> 1.2f
@@ -198,7 +194,7 @@ class MainActivity : AppCompatActivity() {
         }
         var dynamicFactor = baseFactor
 
-        // Пример динамических корректировок:
+        // Пример корректировок
         if (fishName == "Окунь" && temperature > 25) {
             dynamicFactor -= 0.1f
         }
@@ -212,14 +208,14 @@ class MainActivity : AppCompatActivity() {
             dynamicFactor -= 0.2f
         }
 
-        // Ограничиваем коэффициент в диапазоне [0.5, 1.5]
+        // Ограничиваем диапазон [0.5, 1.5]
         if (dynamicFactor < 0.5f) dynamicFactor = 0.5f
         if (dynamicFactor > 1.5f) dynamicFactor = 1.5f
 
         return dynamicFactor
     }
 
-    // Настройка RecyclerView для списка рыб
+    // Настройка RecyclerView
     private fun setupFishRecyclerView() {
         val adapter = FishAdapter(fishList) { fish ->
             Log.d("MainActivity", "Нажата рыба: ${fish.name}")
@@ -238,13 +234,13 @@ class MainActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         val weatherData = response.body()
                         weatherData?.let {
-                            // Обновляем текущие погодные данные
+                            // Обновляем погодные данные
                             currentTemperature = it.main.temp
                             currentPressure = it.main.pressure
-                            currentWindSpeed = 3.5f // Используйте значение, если API его возвращает
-                            currentTimeOfDay = getCurrentTimeOfDay() // Здесь можно динамически определить время суток
+                            currentWindSpeed = 3.5f
+                            currentTimeOfDay = getCurrentTimeOfDay()
                             currentSeason = getSeason()
-                            currentMoonPhase = "New Moon" // Можно рассчитать динамически
+                            currentMoonPhase = "New Moon"
                             currentIsSpawning = false
 
                             val timeOfDayRu = getTimeOfDayInRussian(currentTimeOfDay)
@@ -263,34 +259,6 @@ class MainActivity : AppCompatActivity() {
                                 appendLine("• Нерест: $spawningRu")
                             }
                             binding.tvWeatherForecast.text = infoBuilder.toString()
-
-                            // Если пользователь уже выбрал рыбу, можно пересчитать прогноз здесь
-                            val selectedPosition = binding.spinnerFish.selectedItemPosition
-                            if (selectedPosition in fishList.indices) {
-                                val selectedFish = fishList[selectedPosition]
-                                val fishFactor = getFishFactorDynamic(
-                                    selectedFish.name,
-                                    currentTemperature,
-                                    currentPressure,
-                                    currentWindSpeed,
-                                    currentTimeOfDay,
-                                    currentSeason,
-                                    currentMoonPhase,
-                                    currentIsSpawning
-                                )
-                                val baseScore = calculateCatchScore(
-                                    currentTemperature,
-                                    currentPressure,
-                                    currentWindSpeed,
-                                    currentTimeOfDay,
-                                    currentSeason,
-                                    currentMoonPhase,
-                                    currentIsSpawning
-                                )
-                                val finalScore = (baseScore * fishFactor).toInt()
-                                val forecastText = getForecastText(finalScore)
-                                binding.tvCatchForecast.text = "Прогноз клева для рыбы ${selectedFish.name}: $forecastText"
-                            }
                         }
                     } else {
                         binding.tvWeatherForecast.text = "Ошибка загрузки погоды"
@@ -303,7 +271,7 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    // Определение сезона по текущему месяцу
+    // Определение сезона
     private fun getSeason(): String {
         val month = Calendar.getInstance().get(Calendar.MONTH) + 1
         return when (month) {
@@ -325,23 +293,28 @@ class MainActivity : AppCompatActivity() {
         isSpawning: Boolean
     ): Int {
         var score = 0
+        // Температура
         score += when {
             temp in 15f..20f -> 30
             temp in 10f..25f -> 20
             else -> 5
         }
+        // Ветер
         score += when {
             windSpeed in 3f..5f -> 10
             windSpeed in 1f..10f -> 5
             else -> 0
         }
+        // Давление
         score += if (pressure in 750..770) 20 else 10
+        // Время суток
         score += when (timeOfDay) {
             "Morning", "Evening" -> 10
             "Day" -> 5
             "Night" -> 3
             else -> 0
         }
+        // Сезон
         score += when (season) {
             "Spring" -> 10
             "Summer" -> 15
@@ -349,16 +322,19 @@ class MainActivity : AppCompatActivity() {
             "Winter" -> 5
             else -> 0
         }
+        // Фаза луны
         score += when (moonPhase) {
             "New Moon", "Full Moon" -> 10
             "First Quarter", "Last Quarter" -> 5
             else -> 0
         }
+        // Нерест
         if (isSpawning) score -= 15
+
         return score
     }
 
-    // Преобразование баллов в текстовый прогноз
+    // Преобразование баллов в текст
     private fun getForecastText(score: Int): String {
         return when {
             score >= 80 -> "Отличный"
@@ -367,8 +343,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    // Перевод времени суток на русский
+    // Время суток (en → ru)
     private fun getTimeOfDayInRussian(timeOfDay: String): String {
         return when (timeOfDay) {
             "Morning" -> "Утро"
@@ -379,7 +354,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Перевод сезона на русский
+    // Сезон (en → ru)
     private fun getSeasonInRussian(season: String): String {
         return when (season) {
             "Spring" -> "Весна"
@@ -390,7 +365,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Перевод фазы луны на русский
+    // Фаза луны (en → ru)
     private fun getMoonPhaseInRussian(moonPhase: String): String {
         return when (moonPhase) {
             "New Moon" -> "Новолуние"
@@ -401,22 +376,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Перевод флага нереста на русский
+    // Нерест (en → ru)
     private fun getSpawningInRussian(isSpawning: Boolean): String {
         return if (isSpawning) "Да" else "Нет"
     }
 
-    // Функция для открытия CalendarActivity (если нужно)
-    private fun openCalendarActivity() {
-        val intent = Intent(this, CalendarActivity::class.java)
-        startActivity(intent)
-    }
-
-    // Заполнение таблицы календаря клева
+    // Заполнение календаря клева
     private fun showCalendar() {
         val tableLayout = binding.tlCalendar
         tableLayout.removeAllViews()
 
+        // Заголовок
         val headerRow = TableRow(this)
         val fishHeaderCell = TextView(this).apply {
             text = "Рыба"
@@ -435,6 +405,7 @@ class MainActivity : AppCompatActivity() {
         }
         tableLayout.addView(headerRow)
 
+        // Данные
         for (fishData in fishCalendarList) {
             val row = TableRow(this)
             val fishNameCell = TextView(this).apply {
@@ -458,7 +429,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Функция для получения цвета ячеек
+    // Цвет ячеек
     private fun getColorForActivity(activity: Int): Int {
         return when (activity) {
             0 -> Color.parseColor("#FFFFFF")
@@ -471,18 +442,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Функция для получения текущей даты
+    // Текущая дата
     private fun getCurrentDate(): String {
         val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
         return sdf.format(Date())
     }
 
+    // Цвет для "Плохой", "Хороший", "Отличный"
     private fun getForecastColor(forecastText: String): Int {
         return when (forecastText) {
-            "Плохой" -> android.graphics.Color.parseColor("#F49292")   // нежно-красный
-            "Хороший" -> android.graphics.Color.parseColor("#FFE599") // нежно-жёлтый
-            "Отличный" -> android.graphics.Color.parseColor("#B6D7A8")// нежно-зелёный
-            else -> android.graphics.Color.WHITE
+            "Плохой" -> Color.parseColor("#F49292")   // нежно-красный
+            "Хороший" -> Color.parseColor("#FFE599") // нежно-жёлтый
+            "Отличный" -> Color.parseColor("#B6D7A8")// нежно-зелёный
+            else -> Color.WHITE
         }
     }
 
@@ -495,11 +467,12 @@ class MainActivity : AppCompatActivity() {
             else -> "Night"          // с 21 до 4 ночи
         }
     }
+
+    // Открытие детального экрана для рыбы
     private fun openFishDetails(fish: Fish) {
         val intent = Intent(this, FishDetailActivity::class.java)
-        // Вместо putExtra("fish", fish), делаем так:
+        // Передаём только имя рыбы
         intent.putExtra("fishName", fish.name)
         startActivity(intent)
     }
-
 }
