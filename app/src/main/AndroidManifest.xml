@@ -34,6 +34,10 @@
             android:name=".FishDetailActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".GuideActivity"
+            android:exported="true" />
+
 
 
         <!-- Основное приложение -->

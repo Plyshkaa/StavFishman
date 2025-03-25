@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_guide -> {
-                    // startActivity(Intent(this, GuideActivity::class.java))
+                    startActivity(Intent(this, GuideActivity::class.java))
                     true
                 }
                 R.id.nav_map -> {

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".mainScreen.AboutScreen"
+    tools:context=".AboutScreen"
     android:fitsSystemWindows="true">
 
     <!-- Тулбар с кастомным заголовком по центру -->
