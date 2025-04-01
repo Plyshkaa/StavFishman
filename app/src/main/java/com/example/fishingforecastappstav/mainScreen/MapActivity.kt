@@ -1,10 +1,11 @@
-package com.example.fishingforecastappstav
+package com.example.fishingforecastappstav.mainScreen
 
 
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import com.example.fishingforecastappstav.R
 
 class MapActivity : AppCompatActivity() {
 

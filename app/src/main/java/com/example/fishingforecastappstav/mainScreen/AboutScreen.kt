@@ -1,4 +1,4 @@
-package com.example.fishingforecastappstav
+package com.example.fishingforecastappstav.mainScreen
 
 import android.content.Intent
 import android.graphics.Color
@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.content.ContextCompat
+import com.example.fishingforecastappstav.R
 
 class AboutScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
