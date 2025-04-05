@@ -142,15 +142,15 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Нижнее меню -->
-<com.google.android.material.bottomnavigation.BottomNavigationView
-android:id="@+id/bottomNav"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_gravity="bottom"
-app:menu="@menu/bottom_nav_menu"
-app:itemIconTint="@color/black"
-app:itemTextColor="@color/black"
-app:labelVisibilityMode="labeled"
-    app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"/>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:labelVisibilityMode="labeled"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+        app:menu="@menu/bottom_nav_menu" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 

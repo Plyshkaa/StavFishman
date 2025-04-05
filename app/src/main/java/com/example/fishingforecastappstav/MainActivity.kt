@@ -85,10 +85,7 @@ class MainActivity : AppCompatActivity() {
         // Настраиваем нижнее меню
         binding.bottomNav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_guide -> {
-                    startActivity(Intent(this, GuideActivity::class.java)) // ← Исправлено здесь
-                    true
-                }
+
                 R.id.nav_map -> {
                     startActivity(Intent(this, MapActivity::class.java))
                     true

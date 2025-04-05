@@ -21,10 +21,7 @@ class AboutScreen : AppCompatActivity() {
         bottomNavigationView.selectedItemId = R.id.nav_about
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_guide -> {
-                    startActivity(Intent(this, GuideActivity::class.java))
-                    true
-                }
+
                 R.id.nav_map -> {
                     startActivity(Intent(this, MapActivity::class.java))
                     true
