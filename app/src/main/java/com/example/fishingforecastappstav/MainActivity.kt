@@ -11,8 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.fishingforecastappstav.databinding.ActivityMainBinding
+import com.example.fishingforecastappstav.mainScreen.AboutScreen
 import com.example.fishingforecastappstav.mainScreen.Fish
 import com.example.fishingforecastappstav.mainScreen.FishAdapter
+import com.example.fishingforecastappstav.mainScreen.GuideActivity
+import com.example.fishingforecastappstav.mainScreen.MapActivity
 import com.example.fishingforecastappstav.mainScreen.RetrofitInstance
 import com.example.fishingforecastappstav.mainScreen.WeatherResponse
 import retrofit2.Call
@@ -28,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     // Статический список рыб (RecyclerView)
     private val fishList = listOf(
-        Fish("Окунь", R.drawable.ic_perch, "Лучший клев в утренние часы."),
+        Fish("Окунь", R.drawable.ic_okun1, "Лучший клев в утренние часы."),
         Fish("Щука", R.drawable.ic_pike, "Хищник, клюёт в сумерки."),
         Fish("Лещ", R.drawable.ic_bream, "Питается в пасмурные дни."),
         Fish("Карась", R.drawable.ic_crucian_carp, "Часто разводится в прудах, устойчив даже к неблагоприятным условиям."),
@@ -82,10 +85,7 @@ class MainActivity : AppCompatActivity() {
         // Настраиваем нижнее меню
         binding.bottomNav.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_guide -> {
-                    // startActivity(Intent(this, GuideActivity::class.java))
-                    true
-                }
+
                 R.id.nav_map -> {
                     startActivity(Intent(this, MapActivity::class.java))
                     true

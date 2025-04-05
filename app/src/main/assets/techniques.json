@@ -1,0 +1,21 @@
+{
+  "title": "Техники ловли",
+  "sections": [
+    {
+      "title": "Спиннинг",
+      "content": [
+        { "type": "text", "value": "Описание техники ловли на спиннинг." },
+        { "type": "image", "value": "spin_image" },
+        { "type": "link", "value": "https://example.com/spinning-guide", "label": "Подробный гайд по спиннингу" }
+      ]
+    },
+    {
+      "title": "Фидер",
+      "content": [
+        { "type": "text", "value": "Описание техники ловли на фидер." },
+        { "type": "image", "value": "feeder_image" },
+        { "type": "link", "value": "https://example.com/feeder-tips", "label": "Советы по фидеру" }
+      ]
+    }
+  ]
+}

@@ -38,7 +38,7 @@
         android:id="@+id/app_logo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@mipmap/ic_logo1"
         android:layout_marginTop="16dp"
         android:contentDescription="Логотип приложения"
         app:layout_constraintTop_toBottomOf="@id/toolbar_about"
@@ -50,7 +50,7 @@
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ставрыбак"
+        android:text="КарпаЛов"
         android:textColor="@android:color/black"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -87,13 +87,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Разделитель -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/description_text" />
+<!--    &lt;!&ndash; Разделитель &ndash;&gt;-->
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="1dp"-->
+<!--        android:background="@android:color/darker_gray"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/description_text" />-->
 
     <!-- Информация о разработчиках -->
     <TextView
@@ -121,32 +121,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Ссылки на политику конфиденциальности и лицензии -->
-    <TextView
-        android:id="@+id/privacy_policy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Политика конфиденциальности"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="16sp"
-        android:clickable="true"
-        app:layout_constraintTop_toBottomOf="@id/contact_info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+<!--    &lt;!&ndash; Ссылки на политику конфиденциальности и лицензии &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:id="@+id/privacy_policy"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:text="Политика конфиденциальности"-->
+<!--        android:textColor="@android:color/holo_blue_dark"-->
+<!--        android:textSize="16sp"-->
+<!--        android:clickable="true"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/contact_info"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
-    <TextView
-        android:id="@+id/licenses"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Лицензии"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="16sp"
-        android:clickable="true"
-        app:layout_constraintTop_toBottomOf="@id/privacy_policy"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+<!--    <TextView-->
+<!--        android:id="@+id/licenses"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:text="Лицензии"-->
+<!--        android:textColor="@android:color/holo_blue_dark"-->
+<!--        android:textSize="16sp"-->
+<!--        android:clickable="true"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/privacy_policy"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
     <!-- Разделитель перед социальными ссылками -->
     <View
@@ -154,7 +154,7 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/licenses" />
+        tools:ignore="MissingConstraints" />
 
     <!-- Социальные ссылки -->
     <TextView
@@ -165,37 +165,41 @@
         android:text="Следи за новостями"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/licenses"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <!-- Контейнер для иконок социальных сетей -->
+
+    <!-- Панель навигации внизу -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginTop="364dp"
         android:gravity="center"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/social_media_header">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/social_media_header"
+        tools:layout_editor_absoluteX="0dp">
 
 
         <!-- ВКонтакте -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
             android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp">
+            android:layout_marginEnd="32dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/vk_icon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/vk"
-                android:contentDescription="ВКонтакте"
                 android:clickable="true"
-                android:onClick="openVK" />
+                android:contentDescription="ВКонтакте"
+                android:onClick="openVK"
+                android:src="@drawable/vk" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -210,17 +214,17 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/telegram_icon"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/telegram"
-                android:contentDescription="Telegram"
                 android:clickable="true"
-                android:onClick="openTelegram" />
+                android:contentDescription="Telegram"
+                android:onClick="openTelegram"
+                android:src="@drawable/telegram" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -233,7 +237,6 @@
 
     </LinearLayout>
 
-    <!-- Панель навигации внизу -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"
