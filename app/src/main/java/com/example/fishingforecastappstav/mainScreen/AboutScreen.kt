@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import com.example.fishingforecastappstav.R
 
 class AboutScreen : AppCompatActivity() {
@@ -19,9 +20,8 @@ class AboutScreen : AppCompatActivity() {
         // Получаем нижнее меню и устанавливаем выбранный пункт
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
         bottomNavigationView.selectedItemId = R.id.nav_about
-        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-
                 R.id.nav_map -> {
                     startActivity(Intent(this, MapActivity::class.java))
                     true
@@ -47,10 +47,18 @@ class AboutScreen : AppCompatActivity() {
         toolbar.navigationIcon?.setTint(ContextCompat.getColor(this, R.color.black))
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        // Настройка прозрачного статус-бара
-        window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        // Современный подход к системным элементам
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
         window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+
+        // Скрываем ActionBar
+        supportActionBar?.hide()
     }
 
     // Пример метода для открытия ВКонтакте

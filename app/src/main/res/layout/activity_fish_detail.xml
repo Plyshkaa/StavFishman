@@ -1,50 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/gray_50">
+
+        <!-- Тулбар -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:layout_marginTop="40dp">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/Widget.App.Toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                app:contentInsetStartWithNavigation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/btnBack"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_back"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:tint="@color/gray_800"/>
+
+                    <TextView
+                        android:id="@+id/tvFishNameToolbar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Название рыбы"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray_800"
+                        android:gravity="center"
+                        android:layout_marginStart="16dp"/>
+
+                    <View
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"/>
+                </LinearLayout>
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="16dp"
+            android:paddingBottom="100dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Иконка рыбы -->
-        <ImageView
-            android:id="@+id/ivFishIconDetail"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/fish_icon" />
-
-        <!-- Название рыбы -->
-        <TextView
-            android:id="@+id/tvFishNameDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
-
-        <!-- Краткое описание -->
-        <TextView
-            android:id="@+id/tvFishShortDescDetail"
+        <!-- Карточка с основной информацией -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp"/>
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:background="@drawable/bg_gradient_card">
+
+                <!-- Иконка рыбы -->
+                <ImageView
+                    android:id="@+id/ivFishIconDetail"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_fish_icon_background"
+                    android:padding="16dp"
+                    android:contentDescription="@string/fish_icon" />
+
+                <!-- Название рыбы -->
+                <TextView
+                    android:id="@+id/tvFishNameDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"/>
+
+                <!-- Краткое описание -->
+                <TextView
+                    android:id="@+id/tvFishShortDescDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Блок 1: Общая информация -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardGeneral"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            android:layout_marginTop="16dp"
-            app:cardUseCompatPadding="true">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/white">
 
             <LinearLayout
                 android:id="@+id/layoutGeneral"
@@ -60,22 +144,27 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="4dp">
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:id="@+id/titleGeneral"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Общая информация"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
+                        android:text="📋 Общая информация"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray_800"/>
 
                     <ImageView
                         android:id="@+id/arrowGeneral"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_expand_more3" />
+                        android:src="@drawable/ic_expand_more3"
+                        android:tint="@color/gray_600" />
                 </LinearLayout>
 
                 <!-- Содержимое, по умолчанию скрыто -->
@@ -84,8 +173,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    android:layout_marginTop="8dp"
-                    android:textSize="14sp"/>
+                    android:layout_marginTop="12dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray_700"
+                    android:lineSpacingExtra="4dp"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -94,10 +185,10 @@
             android:id="@+id/cardBaits"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            android:layout_marginTop="16dp"
-            app:cardUseCompatPadding="true">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/white">
 
             <LinearLayout
                 android:id="@+id/layoutBaits"
@@ -113,22 +204,27 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="4dp">
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:id="@+id/titleBaits"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Приманки"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
+                        android:text="🎣 Приманки"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray_800"/>
 
                     <ImageView
                         android:id="@+id/arrowBaits"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_expand_more3" />
+                        android:src="@drawable/ic_expand_more3"
+                        android:tint="@color/gray_600" />
                 </LinearLayout>
 
                 <!-- Содержимое, по умолчанию скрыто -->
@@ -137,8 +233,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    android:layout_marginTop="8dp"
-                    android:textSize="14sp"/>
+                    android:layout_marginTop="12dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray_700"
+                    android:lineSpacingExtra="4dp"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -147,10 +245,10 @@
             android:id="@+id/cardSeasons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            android:layout_marginTop="16dp"
-            app:cardUseCompatPadding="true">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/white">
 
             <LinearLayout
                 android:id="@+id/layoutSeasons"
@@ -166,22 +264,27 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="4dp">
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:id="@+id/titleSeasons"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Время года"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
+                        android:text="🌤️ Время года"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray_800"/>
 
                     <ImageView
                         android:id="@+id/arrowSeasons"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_expand_more3" />
+                        android:src="@drawable/ic_expand_more3"
+                        android:tint="@color/gray_600" />
                 </LinearLayout>
 
                 <!-- Содержимое, по умолчанию скрыто -->
@@ -190,8 +293,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    android:layout_marginTop="8dp"
-                    android:textSize="14sp"/>
+                    android:layout_marginTop="12dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray_700"
+                    android:lineSpacingExtra="4dp"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -200,11 +305,10 @@
             android:id="@+id/cardFeeding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp"
-            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
             android:layout_marginBottom="16dp"
-            app:cardUseCompatPadding="true">
+            app:cardBackgroundColor="@color/white">
 
             <LinearLayout
                 android:id="@+id/layoutFeeding"
@@ -220,22 +324,27 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="4dp">
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:id="@+id/titleFeeding"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Прикормка"
-                        android:textSize="16sp"
-                        android:textStyle="bold"/>
+                        android:text="🌾 Прикормка"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray_800"/>
 
                     <ImageView
                         android:id="@+id/arrowFeeding"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_expand_more3" />
+                        android:src="@drawable/ic_expand_more3"
+                        android:tint="@color/gray_600" />
                 </LinearLayout>
 
                 <!-- Содержимое, по умолчанию скрыто -->
@@ -244,10 +353,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    android:layout_marginTop="8dp"
-                    android:textSize="14sp"/>
+                    android:layout_marginTop="12dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/gray_700"
+                    android:lineSpacingExtra="4dp"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
-</ScrollView>
+        </ScrollView>
+    </LinearLayout>

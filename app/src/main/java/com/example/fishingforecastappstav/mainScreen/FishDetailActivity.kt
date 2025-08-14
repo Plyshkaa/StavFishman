@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.google.gson.Gson
 import com.example.fishingforecastappstav.databinding.ActivityFishDetailBinding
 import com.example.fishingforecastappstav.mainScreen.FishDetail
@@ -18,13 +19,18 @@ class FishDetailActivity : AppCompatActivity() {
         binding = ActivityFishDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Прозрачный статус-бар и тёмные иконки
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                )
+        // Современный подход к системным элементам
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.apply {
+            isAppearanceLightStatusBars = true
+            isAppearanceLightNavigationBars = true
+        }
         window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+
+        // Скрываем ActionBar
+        supportActionBar?.hide()
 
         binding.headerGeneral.setOnClickListener {
             toggleVisibility(binding.contentGeneral, binding.arrowGeneral)
@@ -33,6 +39,12 @@ class FishDetailActivity : AppCompatActivity() {
 
         // Получаем имя рыбы из Intent
         val fishName = intent.getStringExtra("fishName") ?: return
+
+        // Настраиваем тулбар
+        binding.tvFishNameToolbar.text = fishName
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
 
         val fileName = getFileNameForFish(fishName)
 

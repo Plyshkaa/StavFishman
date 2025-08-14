@@ -1,10 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Основные цвета приложения -->
+    <color name="primary">#1E3A8A</color>
+    <color name="primary_dark">#1E40AF</color>
+    <color name="primary_light">#3B82F6</color>
+    <color name="accent">#10B981</color>
+    <color name="accent_light">#34D399</color>
+    
+    <!-- Природные цвета для рыболовной тематики -->
+    <color name="water_blue">#0EA5E9</color>
+    <color name="forest_green">#059669</color>
+    <color name="sand_yellow">#F59E0B</color>
+    <color name="sunset_orange">#F97316</color>
+    <color name="sky_blue">#E0F2FE</color>
+    <color name="grass_green">#DCFCE7</color>
+    
+    <!-- Нейтральные цвета -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray_50">#F9FAFB</color>
+    <color name="gray_100">#F3F4F6</color>
+    <color name="gray_200">#E5E7EB</color>
+    <color name="gray_300">#D1D5DB</color>
+    <color name="gray_400">#9CA3AF</color>
+    <color name="gray_500">#6B7280</color>
+    <color name="gray_600">#4B5563</color>
+    <color name="gray_700">#374151</color>
+    <color name="gray_800">#1F2937</color>
+    <color name="gray_900">#111827</color>
+    
+    <!-- Цвета для прогноза клева -->
+    <color name="excellent_bite">#10B981</color>
+    <color name="good_bite">#34D399</color>
+    <color name="average_bite">#F59E0B</color>
+    <color name="poor_bite">#F97316</color>
+    <color name="no_bite">#EF4444</color>
+    
+    <!-- Устаревшие цвета (оставляем для совместимости) -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
 </resources>
