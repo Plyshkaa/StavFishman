@@ -29,4 +29,6 @@ Gradle, подпись релизных сборок
 Вайб‑кодинг
 Проект создан в парадигме вайб‑кодинга: быстрые итерации, совместное проектирование с ИИ, тестирование на реальном устройстве и немедленное внедрение улучшений по ощущениям пользователя. Фокус на ясность UX, плавные правки без “over‑engineering” и быстрый путь к релизу.
 
+https://www.rustore.ru/catalog/app/com.example.fishingforecastappstav
+
 ![til](https://github.com/Plyshkaa/StavFishman/blob/master/demo1.gif)
