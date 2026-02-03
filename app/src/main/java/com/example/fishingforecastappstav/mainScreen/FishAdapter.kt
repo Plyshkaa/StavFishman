@@ -5,10 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fishingforecastappstav.R
 import com.example.fishingforecastappstav.databinding.ItemFishBinding
 
 class FishAdapter(
-    private val onFishClick: (Fish) -> Unit
+    private val onFishClick: (Fish) -> Unit,
+    private val isFavorite: (Fish) -> Boolean,
+    private val onFavoriteToggle: (Fish) -> Unit
 ) : ListAdapter<Fish, FishAdapter.FishViewHolder>(FishDiffCallback()) {
 
     inner class FishViewHolder(val binding: ItemFishBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -18,6 +21,10 @@ class FishAdapter(
                 tvFishName.text = fish.name
                 ivFishIcon.setImageResource(fish.iconResId)
                 root.setOnClickListener { onFishClick(fish) }
+                ivFavorite.setImageResource(
+                    if (isFavorite(fish)) R.drawable.ic_star_filled else R.drawable.ic_star_outline
+                )
+                ivFavorite.setOnClickListener { onFavoriteToggle(fish) }
             }
         }
     }

@@ -10,10 +10,12 @@
 
     <!-- Тулбар с кастомным заголовком по центру -->
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:elevation="4dp"
+        android:fitsSystemWindows="true"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
@@ -21,7 +23,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
-            android:paddingTop="16dp"
             app:layout_scrollFlags="scroll|enterAlways">
 
             <!-- Текстовое поле для заголовка по центру -->
@@ -41,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_about"
+        app:layout_constraintTop_toBottomOf="@id/appbar_layout"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view">
 
         <LinearLayout
@@ -250,10 +251,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="unlabeled"
         app:itemIconSize="24dp"
         android:background="@color/white"
-        app:itemIconTint="@color/primary"
-        app:itemTextColor="@color/primary"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

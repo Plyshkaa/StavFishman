@@ -41,12 +41,12 @@ class GuideActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         val categories = listOf(
-            GuideCategory("Техники ловли", R.drawable.fishing_techniques),
-            GuideCategory("Снаряжение и оборудование", R.drawable.equipment),
-            GuideCategory("Сезонные советы", R.drawable.seasonal_advice),
-            GuideCategory("Советы от экспертов", R.drawable.expert_advice),
-            GuideCategory("Часто задаваемые вопросы", R.drawable.faq),
-            GuideCategory("Приманки и прикормки", R.drawable.baits_feeding)
+            GuideCategory("Техники ловли", R.drawable.ic_guide),
+            GuideCategory("Снаряжение и оборудование", R.drawable.ic_guide),
+            GuideCategory("Сезонные советы", R.drawable.ic_guide),
+            GuideCategory("Советы от экспертов", R.drawable.ic_guide),
+            GuideCategory("Часто задаваемые вопросы", R.drawable.ic_guide),
+            GuideCategory("Приманки и прикормки", R.drawable.ic_guide)
         )
         val adapter = GuideAdapter(categories) { category ->
             Toast.makeText(this, "Выбрано: ${category.title}", Toast.LENGTH_SHORT).show()

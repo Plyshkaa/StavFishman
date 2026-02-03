@@ -2,9 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/nav_home"
+        android:title="Главная"
+        android:icon="@drawable/ic_home" />
+
+    <item
+        android:id="@+id/nav_info"
+        android:title="Информация"
+        android:icon="@drawable/ic_guide" />
+
+    <item
         android:id="@+id/nav_map"
         android:title="Карта"
         android:icon="@drawable/ic_map" />
+
     <item
         android:id="@+id/nav_about"
         android:title="О приложении"

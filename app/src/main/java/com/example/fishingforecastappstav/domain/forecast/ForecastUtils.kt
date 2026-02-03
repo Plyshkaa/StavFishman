@@ -1,9 +1,28 @@
-package com.example.fishingforecastappstav.utils
+package com.example.fishingforecastappstav.domain.forecast
 
 import android.graphics.Color
 import com.example.fishingforecastappstav.utils.Constants
 
 object ForecastUtils {
+
+    private data class FishProfile(
+        val minTemp: Float,
+        val maxTemp: Float,
+        val badSeasons: Set<String>,
+        val winterScoreCap: Int,
+        val coldScoreCap: Int,
+        val isColdActive: Boolean
+    )
+
+    private val fishProfiles = mapOf(
+        "Окунь" to FishProfile(minTemp = -5f, maxTemp = 24f, badSeasons = emptySet(), winterScoreCap = 75, coldScoreCap = 60, isColdActive = true),
+        "Щука" to FishProfile(minTemp = -8f, maxTemp = 22f, badSeasons = emptySet(), winterScoreCap = 80, coldScoreCap = 65, isColdActive = true),
+        "Лещ" to FishProfile(minTemp = 8f, maxTemp = 25f, badSeasons = setOf(Constants.Season.WINTER), winterScoreCap = 20, coldScoreCap = 25, isColdActive = false),
+        "Карась" to FishProfile(minTemp = 12f, maxTemp = 28f, badSeasons = setOf(Constants.Season.WINTER), winterScoreCap = 10, coldScoreCap = 20, isColdActive = false),
+        "Плотва" to FishProfile(minTemp = 4f, maxTemp = 22f, badSeasons = setOf(Constants.Season.WINTER), winterScoreCap = 20, coldScoreCap = 25, isColdActive = false),
+        "Судак" to FishProfile(minTemp = -6f, maxTemp = 18f, badSeasons = emptySet(), winterScoreCap = 80, coldScoreCap = 65, isColdActive = true),
+        "Сазан" to FishProfile(minTemp = 14f, maxTemp = 30f, badSeasons = setOf(Constants.Season.WINTER), winterScoreCap = 10, coldScoreCap = 15, isColdActive = false)
+    )
     
     // Базовый расчёт баллов клева (максимум 100 баллов)
     fun calculateCatchScore(
@@ -15,64 +34,69 @@ object ForecastUtils {
         moonPhase: String,
         isSpawning: Boolean
     ): Int {
-        var score = 0
-        
-        // Температура (0-25 баллов) - более точная шкала
-        score += when {
-            temp in 15f..22f -> 25  // Оптимальная температура
-            temp in 10f..25f -> 20  // Хорошая температура
-            temp in 5f..30f -> 10   // Приемлемая температура
-            temp in 0f..35f -> 5    // Неблагоприятная температура
-            else -> 0               // Экстремальная температура
-        }
-        
-        // Ветер (0-15 баллов) - более детальная шкала
-        score += when {
-            windSpeed in 2f..6f -> 15   // Оптимальный ветер
-            windSpeed in 1f..8f -> 10   // Хороший ветер
-            windSpeed in 0f..12f -> 5   // Приемлемый ветер
-            else -> 0                   // Сильный ветер
-        }
-        
-        // Давление (0-20 баллов) - более точная шкала
-        score += when {
-            pressure in 750..770 -> 20  // Оптимальное давление
-            pressure in 740..780 -> 15  // Хорошее давление
-            pressure in 730..790 -> 10  // Приемлемое давление
-            else -> 5                   // Неблагоприятное давление
-        }
-        
-        // Время суток (0-15 баллов) - более точная шкала
-        score += when (timeOfDay) {
-            Constants.TimeOfDay.MORNING -> 15   // Утро - лучшее время
-            Constants.TimeOfDay.EVENING -> 12   // Вечер - хорошее время
-            Constants.TimeOfDay.DAY -> 8        // День - среднее время
-            Constants.TimeOfDay.NIGHT -> 5      // Ночь - плохое время
+        // Нормированные оценки факторов (0..100)
+        val tempScore = when {
+            temp < 0f -> 0
+            temp in 0f..4f -> 15
+            temp in 5f..9f -> 35
+            temp in 10f..14f -> 60
+            temp in 15f..22f -> 100
+            temp in 23f..25f -> 80
+            temp in 26f..30f -> 50
+            temp in 31f..35f -> 25
             else -> 0
         }
-        
-        // Сезон (0-15 баллов) - более точная шкала
-        score += when (season) {
-            Constants.Season.AUTUMN -> 15   // Осень - лучшее время
-            Constants.Season.SPRING -> 12   // Весна - хорошее время
-            Constants.Season.SUMMER -> 10   // Лето - среднее время
-            Constants.Season.WINTER -> 5    // Зима - плохое время
-            else -> 0
+
+        val windScore = when {
+            windSpeed in 2f..5f -> 100
+            windSpeed in 1f..7f -> 70
+            windSpeed in 0f..10f -> 40
+            else -> 20
         }
-        
-        // Фаза луны (0-10 баллов) - более точная шкала
-        score += when (moonPhase) {
-            Constants.MoonPhase.NEW_MOON -> 10      // Новолуние - лучшее время
-            Constants.MoonPhase.FULL_MOON -> 8      // Полнолуние - хорошее время
-            Constants.MoonPhase.FIRST_QUARTER -> 6  // Первая четверть
-            Constants.MoonPhase.LAST_QUARTER -> 4   // Последняя четверть
-            else -> 0
+
+        val pressureScore = when {
+            pressure in 750..770 -> 100
+            pressure in 740..749 || pressure in 771..780 -> 70
+            pressure in 730..739 || pressure in 781..790 -> 40
+            else -> 20
         }
-        
-        // Нерест (штраф -20 баллов) - увеличенный штраф
-        if (isSpawning) score -= 20
-        
-        return score.coerceIn(0, 100) // Ограничиваем диапазон [0, 100]
+
+        val timeScore = when (timeOfDay) {
+            Constants.TimeOfDay.MORNING -> 100
+            Constants.TimeOfDay.EVENING -> 80
+            Constants.TimeOfDay.DAY -> 60
+            Constants.TimeOfDay.NIGHT -> 40
+            else -> 50
+        }
+
+        val seasonScore = when (season) {
+            Constants.Season.AUTUMN -> 100
+            Constants.Season.SPRING -> 80
+            Constants.Season.SUMMER -> 60
+            Constants.Season.WINTER -> 40
+            else -> 50
+        }
+
+        val moonScore = when (moonPhase) {
+            Constants.MoonPhase.NEW_MOON -> 100
+            Constants.MoonPhase.FULL_MOON -> 80
+            Constants.MoonPhase.FIRST_QUARTER -> 60
+            Constants.MoonPhase.LAST_QUARTER -> 40
+            else -> 50
+        }
+
+        // Веса факторов (сумма = 1.0)
+        val score = (tempScore * 0.35f +
+            pressureScore * 0.20f +
+            windScore * 0.15f +
+            timeScore * 0.15f +
+            seasonScore * 0.10f +
+            moonScore * 0.05f).toInt()
+
+        // Нерест (штраф)
+        val adjustedScore = if (isSpawning) score - 20 else score
+
+        return adjustedScore.coerceIn(0, 100)
     }
     
     // Улучшенный динамический расчёт коэффициента для конкретной рыбы
@@ -116,7 +140,7 @@ object ForecastUtils {
                 when (season) {
                     Constants.Season.SPRING -> dynamicFactor += 0.1f
                     Constants.Season.AUTUMN -> dynamicFactor += 0.05f
-                    Constants.Season.WINTER -> dynamicFactor -= 0.1f
+                    Constants.Season.WINTER -> dynamicFactor += 0.1f
                 }
             }
             
@@ -135,7 +159,7 @@ object ForecastUtils {
                 when (season) {
                     Constants.Season.AUTUMN -> dynamicFactor += 0.15f
                     Constants.Season.SPRING -> dynamicFactor += 0.1f
-                    Constants.Season.WINTER -> dynamicFactor -= 0.15f
+                    Constants.Season.WINTER -> dynamicFactor += 0.2f
                 }
             }
             
@@ -154,7 +178,7 @@ object ForecastUtils {
                 when (season) {
                     Constants.Season.SPRING -> dynamicFactor += 0.1f
                     Constants.Season.AUTUMN -> dynamicFactor += 0.05f
-                    Constants.Season.WINTER -> dynamicFactor -= 0.15f
+                    Constants.Season.WINTER -> dynamicFactor -= 0.2f
                 }
             }
             
@@ -172,7 +196,7 @@ object ForecastUtils {
                 when (season) {
                     Constants.Season.SUMMER -> dynamicFactor += 0.15f
                     Constants.Season.SPRING -> dynamicFactor += 0.1f
-                    Constants.Season.WINTER -> dynamicFactor -= 0.1f
+                    Constants.Season.WINTER -> dynamicFactor -= 0.2f
                 }
             }
             
@@ -181,7 +205,7 @@ object ForecastUtils {
                 when (season) {
                     Constants.Season.AUTUMN -> dynamicFactor += 0.2f
                     Constants.Season.SPRING -> dynamicFactor += 0.1f
-                    Constants.Season.WINTER -> dynamicFactor -= 0.1f
+                    Constants.Season.WINTER -> dynamicFactor -= 0.2f
                 }
                 when (timeOfDay) {
                     Constants.TimeOfDay.DAY -> dynamicFactor += 0.15f
@@ -209,7 +233,8 @@ object ForecastUtils {
                 when (season) {
                     Constants.Season.AUTUMN -> dynamicFactor += 0.15f
                     Constants.Season.SPRING -> dynamicFactor += 0.1f
-                    Constants.Season.SUMMER -> dynamicFactor -= 0.1f
+                    Constants.Season.SUMMER -> dynamicFactor -= 0.2f
+                    Constants.Season.WINTER -> dynamicFactor += 0.25f
                 }
             }
             
@@ -227,7 +252,7 @@ object ForecastUtils {
                 when (season) {
                     Constants.Season.SUMMER -> dynamicFactor += 0.2f
                     Constants.Season.SPRING -> dynamicFactor += 0.1f
-                    Constants.Season.WINTER -> dynamicFactor -= 0.2f
+                    Constants.Season.WINTER -> dynamicFactor -= 0.25f
                 }
             }
         }
@@ -294,7 +319,13 @@ object ForecastUtils {
             fishName, temperature, pressure, windSpeed, timeOfDay, season, moonPhase, isSpawning
         )
         
-        val finalScore = (baseScore * fishFactor).toInt().coerceIn(0, 100)
+        val rawScore = (baseScore * fishFactor).toInt().coerceIn(0, 100)
+        val (finalScore, constraintNotes) = applyFishConstraints(
+            fishName = fishName,
+            temperature = temperature,
+            season = season,
+            score = rawScore
+        )
         val forecastText = getForecastText(finalScore)
         
         return DetailedForecast(
@@ -303,8 +334,45 @@ object ForecastUtils {
             fishFactor = fishFactor,
             finalScore = finalScore,
             forecastText = forecastText,
-            recommendations = getRecommendations(fishName, temperature, pressure, windSpeed, timeOfDay, season)
+            recommendations = constraintNotes + getRecommendations(fishName, temperature, pressure, windSpeed, timeOfDay, season)
         )
+    }
+
+    private fun applyFishConstraints(
+        fishName: String,
+        temperature: Float,
+        season: String,
+        score: Int
+    ): Pair<Int, List<String>> {
+        val profile = fishProfiles[fishName] ?: return score to emptyList()
+        var adjustedScore = score
+        val notes = mutableListOf<String>()
+
+        if (season == Constants.Season.WINTER && profile.badSeasons.contains(Constants.Season.WINTER)) {
+            if (adjustedScore > profile.winterScoreCap) {
+                adjustedScore = profile.winterScoreCap
+            }
+            notes.add("Зимой активность $fishName низкая")
+        }
+
+        if (temperature < profile.minTemp) {
+            val cap = profile.coldScoreCap
+            if (adjustedScore > cap) adjustedScore = cap
+            notes.add(
+                if (profile.isColdActive) {
+                    "Сильный холод снижает активность $fishName, но клев возможен"
+                } else {
+                    "Температура слишком низкая для $fishName"
+                }
+            )
+        }
+
+        if (temperature > profile.maxTemp) {
+            if (adjustedScore > 35) adjustedScore = 35
+            notes.add("Температура слишком высокая для $fishName")
+        }
+
+        return adjustedScore to notes
     }
     
     private fun getRecommendations(

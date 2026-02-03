@@ -10,7 +10,10 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.browser.customtabs.CustomTabsIntent
+import com.example.fishingforecastappstav.MainActivity
 import com.example.fishingforecastappstav.R
+import com.example.fishingforecastappstav.utils.Constants
 
 class AboutScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,40 +25,38 @@ class AboutScreen : AppCompatActivity() {
         bottomNavigationView.selectedItemId = R.id.nav_about
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.nav_home -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                R.id.nav_info -> {
+                    startActivity(Intent(this, InfoActivity::class.java))
+                    true
+                }
                 R.id.nav_map -> {
-                    startActivity(Intent(this, MapActivity::class.java))
+                    openMap()
                     true
                 }
-                R.id.nav_about -> {
-                    // Если уже на экране "О приложении", можно либо ничего не делать,
-                    // либо перезагрузить экран, если это требуется.
-                    true
-                }
+                R.id.nav_about -> true
                 else -> false
             }
         }
 
         // Настройка Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar_about)
-        setSupportActionBar(toolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowTitleEnabled(false)
-            title = "О приложении"
-        }
         toolbar.navigationIcon = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back)
         toolbar.navigationIcon?.setTint(ContextCompat.getColor(this, R.color.black))
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         // Современный подход к системным элементам
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.apply {
             isAppearanceLightStatusBars = true
             isAppearanceLightNavigationBars = true
         }
-        window.statusBarColor = Color.TRANSPARENT
-        window.navigationBarColor = Color.TRANSPARENT
+        window.statusBarColor = Color.WHITE
+        window.navigationBarColor = Color.WHITE
 
         // Скрываем ActionBar
         supportActionBar?.hide()
@@ -71,5 +72,11 @@ class AboutScreen : AppCompatActivity() {
     fun openTelegram(view: View) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/Fishing_Stavropol"))
         startActivity(intent)
+    }
+
+    private fun openMap() {
+        val uri = Uri.parse(Constants.MAP_URL)
+        val customTabsIntent = CustomTabsIntent.Builder().build()
+        customTabsIntent.launchUrl(this, uri)
     }
 }

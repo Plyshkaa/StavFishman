@@ -2,12 +2,16 @@ package com.example.fishingforecastappstav.utils
 
 object Constants {
     
-    // API ключи
-    const val WEATHER_API_KEY = "b2f3cbb0c3c8e31e7a784ac5c9b417c7"
-    const val WEATHER_BASE_URL = "https://api.openweathermap.org/"
+    // Open-Meteo base URL (no API key required for free tier)
+    const val WEATHER_BASE_URL = "https://api.open-meteo.com/"
     
-    // Города
-    const val DEFAULT_CITY = "Stavropol"
+    // Координаты по умолчанию (Ставрополь)
+    // ~45°03′N, 41°58′E
+    const val DEFAULT_LATITUDE = 45.05
+    const val DEFAULT_LONGITUDE = 41.9667
+
+    // Карта рыболовных мест
+    const val MAP_URL = "https://www.google.ru/maps/d/viewer?mid=1WQ1s7X6JYl1-RUIHFGLuv0gsQyJmt8E&ll=44.61720454287925%2C42.77709834377079&z=9"
     
     // Названия месяцев для календаря
     val MONTHS = arrayOf("Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек")
@@ -59,6 +63,7 @@ object Constants {
     
     // Давление
     object PressureRanges {
+        // Значения в мм рт. ст.
         const val OPTIMAL_MIN = 750
         const val OPTIMAL_MAX = 770
     }

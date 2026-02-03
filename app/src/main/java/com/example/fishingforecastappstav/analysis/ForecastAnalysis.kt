@@ -1,6 +1,6 @@
 package com.example.fishingforecastappstav.analysis
 
-import com.example.fishingforecastappstav.utils.ForecastUtils
+import com.example.fishingforecastappstav.domain.forecast.ForecastUtils
 import com.example.fishingforecastappstav.utils.Constants
 
 /**
